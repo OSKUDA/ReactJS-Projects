@@ -1,5 +1,4 @@
 import Pet from "./Pet";
-import SearchParams from "./SearchParams";
 
 const Results = ({ pets }) => {
   return (
@@ -10,6 +9,7 @@ const Results = ({ pets }) => {
         pets.map((pet) => (
           <Pet
             animal={pet.animal}
+            id={pet.id}
             name={pet.name}
             breed={pet.breed}
             images={pet.images}
