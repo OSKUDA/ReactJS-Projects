@@ -1,4 +1,4 @@
-function validateEmailPassword(email, password) {
+function validateEmailPassword(email = "", password = "") {
   return {
     email: validateEmail(email),
     password: validatePassword(password),

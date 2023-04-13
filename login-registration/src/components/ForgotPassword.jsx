@@ -1,14 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import validateEmailPassword from "../utils/validateEmailPassword";
-const SignIn = () => {
+const ForgotPassword = () => {
+  const [emailError, setEmailError] = useState(false);
   const [requestParams, setRequestParams] = useState({
     email: "",
-    password: "",
   });
-  const [emailError, setEmailError] = useState(false);
-  const [passwordError, setPasswordError] = useState(false);
-
   return (
     <div className="form-container vertical-center">
       <form
@@ -17,18 +14,20 @@ const SignIn = () => {
           const formData = new FormData(e.target);
           const obj = {
             email: formData.get("email") ?? "",
-            password: formData.get("password") ?? "",
           };
           // input validation
-          const validObj = validateEmailPassword(obj.email, obj.password);
-          setEmailError(!validObj.email);
-          setPasswordError(!validObj.password);
-          if (validObj.email && validObj.password) {
-            setRequestParams(obj);
+          const validObj = {
+            emailAndPassword: validateEmailPassword(obj.email),
+          };
+          setEmailError(!validObj.emailAndPassword.email);
+          if (validObj.emailAndPassword.email) {
+            setRequestParams({
+              email: true,
+            });
           }
         }}
       >
-        <h1 className="center">Sign-In</h1>
+        <h1 className="center">Reset Password</h1>
         <br />
         <br />
         <label htmlFor="email">
@@ -38,26 +37,15 @@ const SignIn = () => {
           ) : null}
           <input name="email" id="email" placeholder="email" />
         </label>
-        <label htmlFor="password">
-          Password:{" "}
-          {passwordError ? (
-            <span className="error-message">* password is invalid</span>
-          ) : null}
-          <input
-            name="password"
-            type="password"
-            id="password"
-            placeholder="password"
-          />
-        </label>
+
         <div className="button center">
-          <button>Login</button>
+          <button>Reset</button>
         </div>
         <br />
         <br />
         <hr />
         <p>
-          forgot password? <Link to={"/forgot-password"}>click here</Link>
+          already have an account? <Link to={"/login"}>sign-in here</Link>
         </p>
         <p>
           don&apos;t have an account?{" "}
@@ -68,4 +56,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default ForgotPassword;
