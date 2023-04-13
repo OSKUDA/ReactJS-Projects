@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import validateEmailVerificationUrl from "../utils/validateEmailVerificationUrl";
-import fetchVerifyEmail from "../services/fetchVerifyEmail";
+import getVerifyEmail from "../services/getVerifyEmail";
 const VerifyEmail = () => {
   const [urlError, setUrlError] = useState(false);
   const [serverError, setServerError] = useState(false);
@@ -21,7 +21,7 @@ const VerifyEmail = () => {
           };
           setUrlError(!validObj.url);
           if (validObj.url) {
-            fetchVerifyEmail(obj.url)
+            getVerifyEmail(obj.url)
               .then((response) => {
                 setServerError(false);
                 setResult(response.data);

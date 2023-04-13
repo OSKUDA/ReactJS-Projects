@@ -2,21 +2,21 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import validateEmailPassword from "../utils/validateEmailPassword";
 import validateFirstAndLastName from "../utils/validateFirstAndLastName";
+import postRegisterUser from "../services/postRegisterUser";
 const Register = () => {
-  const [requestParams, setRequestParams] = useState({
-    email: "",
-    password: "",
-  });
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [firstNameError, setFirstNameError] = useState(false);
   const [lastNameError, setLastNameError] = useState(false);
-
+  const [result, setResult] = useState("");
+  const [serverError, setServerError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   return (
     <div className="form-container vertical-center">
       <form
         onSubmit={(e) => {
           e.preventDefault();
+          setIsLoading(true);
           const formData = new FormData(e.target);
           const obj = {
             email: formData.get("email") ?? "",
@@ -40,11 +40,26 @@ const Register = () => {
             validObj.emailAndPassword.email &&
             validObj.emailAndPassword.password
           ) {
-            setRequestParams(obj);
+            postRegisterUser({
+              query: [obj.firstName, obj.lastName, obj.email, obj.password],
+            })
+              .then((response) => {
+                setIsLoading(false);
+                setServerError(false);
+                setResult(response.data);
+              })
+              .catch((e) => {
+                console.error(e.message);
+                setIsLoading(false);
+                setServerError(true);
+              });
+          } else {
+            setIsLoading(false);
           }
         }}
       >
         <h1 className="center">Register</h1>
+
         <br />
         <br />
         <label htmlFor="firstName">
@@ -81,15 +96,25 @@ const Register = () => {
           />
         </label>
         <div className="button center">
-          <button>Login</button>
+          <button>{isLoading ? "---" : "Login"}</button>
         </div>
         <br />
+        {serverError ? (
+          <span className="error-message">* server error {serverError}</span>
+        ) : null}
         <br />
         <hr />
         <p>
           already have an account? <Link to={"/login"}>sign-in here</Link>
         </p>
       </form>
+      <p className="server-message">
+        {result === ""
+          ? null
+          : `Registration: ${
+              result["registrationSuccess"] ? "success" : "email already exists"
+            }`}
+      </p>
     </div>
   );
 };
