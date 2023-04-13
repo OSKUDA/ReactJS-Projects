@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import validateEmailVerificationUrl from "../utils/validateEmailVerificationUrl";
-import axios from "axios";
 import fetchVerifyEmail from "../services/fetchVerifyEmail";
 const VerifyEmail = () => {
   const [urlError, setUrlError] = useState(false);
