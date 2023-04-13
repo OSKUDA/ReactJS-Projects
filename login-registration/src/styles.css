@@ -66,3 +66,17 @@ body {
 .button button {
   width: 90px;
 }
+
+.loading-pane {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  padding: 15px;
+}
+.loader {
+  font-size: 120px;
+}
+
+.server-message {
+  font-size: 42px;
+}

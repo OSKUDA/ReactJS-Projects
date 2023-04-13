@@ -4,6 +4,7 @@ import SignIn from "./components/SignIn";
 import Register from "./components/Register";
 import ForgotPassword from "./components/ForgotPassword";
 import VerifyEmail from "./components/VerifyEmail";
+
 const App = () => {
   return (
     <BrowserRouter>

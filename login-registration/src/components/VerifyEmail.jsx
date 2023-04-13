@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import validateEmailVerificationUrl from "../utils/validateEmailVerificationUrl";
+import axios from "axios";
+import fetchVerifyEmail from "../services/fetchVerifyEmail";
 const VerifyEmail = () => {
   const [urlError, setUrlError] = useState(false);
+  const [serverError, setServerError] = useState(false);
+  const [result, setResult] = useState("");
   return (
     <div className="form-container vertical-center">
       <form
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
           e.preventDefault();
           const formData = new FormData(e.target);
           const obj = {
@@ -18,18 +22,29 @@ const VerifyEmail = () => {
           };
           setUrlError(!validObj.url);
           if (validObj.url) {
-            // do some work
-            console.log("url is valid, ok to send request");
+            fetchVerifyEmail(obj.url)
+              .then((response) => {
+                setServerError(false);
+                setResult(response.data);
+              })
+              .catch((e) => {
+                console.error("ERROR: ", e.message);
+                setServerError(true);
+              });
           }
         }}
       >
         <h1 className="center">Verify Email</h1>
         <br />
         <br />
+
         <label htmlFor="verification-url">
           Verification URL{" "}
           {urlError ? (
-            <span className="error-message">* url is empty</span>
+            <span className="error-message">* malformed url</span>
+          ) : null}
+          {serverError ? (
+            <span className="error-message">* server error</span>
           ) : null}
           <input
             name="verification-url"
@@ -52,6 +67,11 @@ const VerifyEmail = () => {
           <Link to={"/register"}>register here</Link>
         </p>
       </form>
+      <p className="server-message">
+        {result === ""
+          ? null
+          : `Your email is: ${result["emailVerificationTokenStatus"]}`}
+      </p>
     </div>
   );
 };
