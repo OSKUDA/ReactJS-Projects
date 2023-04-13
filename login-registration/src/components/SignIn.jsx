@@ -1,19 +1,19 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import validateEmailPassword from "../utils/validateEmailPassword";
+import postAuthenticate from "../services/postAuthenticate";
 const SignIn = () => {
-  const [requestParams, setRequestParams] = useState({
-    email: "",
-    password: "",
-  });
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
-
+  const [result, setResult] = useState("");
+  const [serverError, setServerError] = useState(false);
+  const [invalidCredentialError, setInvalidCredentialError] = useState(false);
   return (
     <div className="form-container vertical-center">
       <form
         onSubmit={(e) => {
           e.preventDefault();
+          setInvalidCredentialError(false);
           const formData = new FormData(e.target);
           const obj = {
             email: formData.get("email") ?? "",
@@ -24,7 +24,18 @@ const SignIn = () => {
           setEmailError(!validObj.email);
           setPasswordError(!validObj.password);
           if (validObj.email && validObj.password) {
-            setRequestParams(obj);
+            postAuthenticate({
+              query: [obj.email, obj.password],
+            })
+              .then((response) => {
+                response.data["token"] === "not-valid"
+                  ? setInvalidCredentialError(true)
+                  : setResult(response.data);
+              })
+              .catch((e) => {
+                console.error(e);
+                setServerError(true);
+              });
           }
         }}
       >
@@ -50,10 +61,17 @@ const SignIn = () => {
             placeholder="password"
           />
         </label>
+        <br />
+        {invalidCredentialError ? (
+          <span className="error-message">* invalid credentials</span>
+        ) : null}
         <div className="button center">
           <button>Login</button>
         </div>
         <br />
+        {serverError ? (
+          <span className="error-message">* server error {serverError}</span>
+        ) : null}
         <br />
         <hr />
         <p>
@@ -64,6 +82,9 @@ const SignIn = () => {
           <Link to={"/register"}>register here</Link>
         </p>
       </form>
+      <p className="server-message">
+        {result === "" ? null : `Authentication Token: ${result["token"]}`}
+      </p>
     </div>
   );
 };
