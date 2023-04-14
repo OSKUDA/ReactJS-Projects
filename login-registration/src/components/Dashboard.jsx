@@ -40,6 +40,7 @@ const Dashboard = () => {
           </form>
           {secureComponent ? <SecureComponent /> : null}
         </div>
+
         <div className="button sign-out-button">
           <button
             onClick={() => {
@@ -47,6 +48,15 @@ const Dashboard = () => {
             }}
           >
             Secure API
+          </button>
+        </div>
+        <div className="button sign-out-button">
+          <button
+            onClick={() => {
+              navigate("/change-password");
+            }}
+          >
+            Change Password
           </button>
         </div>
         <div className="button sign-out-button">
