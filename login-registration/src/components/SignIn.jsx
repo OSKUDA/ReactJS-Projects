@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import validateEmailPassword from "../utils/validateEmailPassword";
 import postAuthenticate from "../services/postAuthenticate";
 const SignIn = () => {
@@ -8,12 +8,15 @@ const SignIn = () => {
   const [result, setResult] = useState("");
   const [serverError, setServerError] = useState(false);
   const [invalidCredentialError, setInvalidCredentialError] = useState(false);
+  // eslint-disable-next-line no-unused-vars
+  const navigate = useNavigate();
   return (
     <div className="form-container vertical-center">
       <form
         onSubmit={(e) => {
           e.preventDefault();
           setInvalidCredentialError(false);
+          setResult("");
           const formData = new FormData(e.target);
           const obj = {
             email: formData.get("email") ?? "",
@@ -28,9 +31,17 @@ const SignIn = () => {
               query: [obj.email, obj.password],
             })
               .then((response) => {
-                response.data["token"] === "not-valid"
-                  ? setInvalidCredentialError(true)
-                  : setResult(response.data);
+                if (response.data["token"] === "not-valid") {
+                  setInvalidCredentialError(true);
+                } else {
+                  setResult(response.data);
+                  console.log(response.data["token"]);
+                  localStorage.setItem(
+                    "token",
+                    JSON.stringify(response.data["token"])
+                  );
+                  navigate("/dashboard");
+                }
               })
               .catch((e) => {
                 console.error(e);
@@ -83,7 +94,9 @@ const SignIn = () => {
         </p>
       </form>
       <p className="server-message">
-        {result === "" ? null : `Authentication Token: ${result["token"]}`}
+        {result === ""
+          ? null
+          : `Authentication Status: ${result["token"] !== ""}`}
       </p>
     </div>
   );
