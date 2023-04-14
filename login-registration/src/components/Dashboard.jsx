@@ -1,8 +1,11 @@
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import SecureComponent from "./SecureComponent";
 
 const Dashboard = () => {
   const token = JSON.parse(localStorage.getItem("token"));
   const navigate = useNavigate();
+  const [secureComponent, setSecureComponent] = useState(false);
   if (token === null) {
     return (
       <div className="form-container vertical-center">
@@ -35,9 +38,16 @@ const Dashboard = () => {
 
             <br />
           </form>
+          {secureComponent ? <SecureComponent /> : null}
         </div>
         <div className="button sign-out-button">
-          <button>Secure API</button>
+          <button
+            onClick={() => {
+              setSecureComponent(true);
+            }}
+          >
+            Secure API
+          </button>
         </div>
         <div className="button sign-out-button">
           <button
