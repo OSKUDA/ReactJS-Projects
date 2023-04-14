@@ -80,3 +80,8 @@ body {
 .server-message {
   font-size: 42px;
 }
+
+.sign-out-button {
+  width: 100px;
+  margin: auto;
+}
